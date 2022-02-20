@@ -2,11 +2,17 @@
 <p>
     Vous êtes sur la page d'accueil.
 </p>
+{{#if loggedIn}}
+    <p>
+        Vous êtes connecté en tant que {{user.name}}.
+    </p>
+{{/if}}
+{{#unless loggedIn}}
 <p>
     <a href="/users/login">Se connecter</a>
 </p>
 <p>
     <a href="/users/register">S'inscrire</a>
 </p>
-
+{{/unless}}
 <p>Il y a {{nbUsers}} utilisateurs inscrits, {{nbDevices}} appareils connectés et {{nbImages}} images enregistrées.</p>

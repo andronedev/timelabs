@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var sassMiddleware = require('node-sass-middleware');
 var cors = require("cors")
+const session = require('express-session');
 
 var db = require("./database/index.js");
 
@@ -14,12 +15,18 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+
 var corsOptions = {
-  origin: "http://localhost:8081"
+  origin: 'http://localhost:3000',
 };
+
 app.use(cors(corsOptions));
 
-
+app.use(session({
+	secret: 'aaa',
+	resave: true,
+	saveUninitialized: true
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

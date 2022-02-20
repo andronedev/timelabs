@@ -20,7 +20,10 @@ router.post("/login",async function(req,res,next){
     }
   })
   if(user){
-    res.send(user)
+    req.session.userid = user.id
+    req.session.loggedIn = true
+    res.redirect('/')
+
   }else{
     res.send("error")
   }
@@ -47,7 +50,16 @@ router.post('/register', async function(req,res,next){
       password: user.password,
       name: user.name
     })
-    res.send("Vous êtes inscrit")
+    // create session
+    let userid = await db.models.Users.findOne({
+      where: {
+        email: user.email
+      }
+    })
+
+    req.session.userid = userid.id
+    req.session.loggedIn = true
+    res.redirect('/')
   }
 })
 
