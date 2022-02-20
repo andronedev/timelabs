@@ -1,0 +1,12 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "database": "${workspaceFolder:timelabs}/db.sqlite",
+            "name": "main",
+            "group": "timelabs"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}
