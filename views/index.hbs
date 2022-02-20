@@ -2,12 +2,12 @@
 <p>
     Vous êtes sur la page d'accueil.
 </p>
-{{#if loggedIn}}
+{{#if user}}
     <p>
         Vous êtes connecté en tant que {{user.name}}.
     </p>
 {{/if}}
-{{#unless loggedIn}}
+{{#unless user}}
 <p>
     <a href="/users/login">Se connecter</a>
 </p>
