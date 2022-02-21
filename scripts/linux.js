@@ -19,17 +19,15 @@ echo "===================="\n
 while true; do\n
     
     fswebcam -r 1920x1080 -S 30 --no-banner /tmp/frame.jpg\n
-    curl -X POST -F "file=@/tmp/frame.jpg" {{DOMAINE}}api/v1/send/{{KEY}}\n
-    \n
-    sleep {{SLEEP}}\n
-    \n
+    wait=$(curl -X POST -F "file=@/tmp/frame.jpg" {{DOMAINE}}api/v1/send/{{KEY}})e-3s\n
+    echo "waiting: $wait"\n
+    sleep $wait\n
     
 done\n
 `
-function generate(domaine, key, sleep = "60") {
+function generate(domaine, key) {
     let customCode = code.replace(/{{DOMAINE}}/g, domaine);
     customCode = customCode.replace(/{{KEY}}/g, key);
-    customCode = customCode.replace(/{{SLEEP}}/g, sleep);
     return customCode;
 }
 

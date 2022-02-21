@@ -84,7 +84,10 @@ router.get('/devices/:id', async function (req, res, next) {
     var images = await db.models.Images.findAll({
         where: {
             deviceId: device.id
-        }
+        },
+        order: [
+            ['createdAt', 'DESC']
+        ]
     });
     res.render('dashboard_device', { user, device: device, images: images });
 });
@@ -114,6 +117,98 @@ router.get('/devices/:id/script/:type', async function (req, res, next) {
         res.send(code);
     }
 })
+router.post("/devices/:id/edit", async function (req, res, next) {
+    var user = req.session.loggedIn ? await db.models.Users.findOne({
+        where: {
+            id: req.session.userid
+        }
+    }) : null;
+    if (!user) {
+        res.redirect('/users/login');
+        next();
+    }
+    var device = await db.models.Devices.findOne({
+        where: {
+            id: req.params.id
+        }
+    });
+    if (!device) {
+        res.redirect('/dashboard');
+        next();
+    }
+    if (req.body.name) {
+        device.name = req.body.name;
+    }
+    if (req.body.intervalS){
+        if (req.body.intervalS >= 5){
+            device.intervalMs = req.body.intervalS * 1000;
+        }
+    }
+    device.save();
+    res.redirect('/dashboard/devices/' + device.id);
+});
+router.post("/devices/:id/createtimelaps", async function (req, res, next) {
+    var user = req.session.loggedIn ? await db.models.Users.findOne({
+        where: {
+            id: req.session.userid
+        }
+    }) : null;
+    if (!user) {
+        res.redirect('/users/login');
+        next();
+    }
+
+    var device = await db.models.Devices.findOne({
+        where: {
+            id: req.params.id
+        }
+    });
+    if (!device) {
+        res.redirect('/dashboard');
+        next();
+    }
+    var images = await db.models.images.findAll({
+        where: {
+            deviceId: device.id
+        }
+    });
+    framerate = req.body.framerate;
+    if (framerate < 1) {
+        framerate = 1;
+    }
+    if (images.length == 0) {
+        res.redirect('/dashboard/devices/' + device.id);
+        next();
+    }
+    require("../timelaps/generator.js")(images, framerate, user.id, device.id)
+    res.redirect('/dashboard/devices/' + device.id);
+});
+
+router.get('/devices/:id/timelaps/:tid', async function (req, res, next) {
+    var user = req.session.loggedIn ? await db.models.Users.findOne({
+        where: {
+            id: req.session.userid
+        }
+    }) : null;
+    if (!user) {
+        res.redirect('/users/login');
+        next();
+    }
+    var timeLaps = await db.models.TimeLaps.findOne({
+        where: {
+            id: req.params.tid,
+            userId: user.id,
+            deviceId: req.params.id
+        }
+    });
+    if (!timeLaps) {
+        res.redirect('/dashboard/devices/' + req.params.id);
+        next();
+    }
+    res.sendFile(path.join(__dirname, '../timelaps/' + timeLaps.id + '.mp4'));
+});
+
+
 router.get('/image/:id', async function (req, res, next) {
     var user = req.session.loggedIn ? await db.models.Users.findOne({
         where: {
@@ -134,7 +229,7 @@ router.get('/image/:id', async function (req, res, next) {
         res.sendStatus(404);
     }
     console.log(image)
-    
+
     res.sendFile(path.join(__dirname, '../images/' + image.url));
 
 })
@@ -154,7 +249,7 @@ router.get('/image/:id/delete', async function (req, res, next) {
             userId: user.id
         }
     });
-    
+
 })
 
 module.exports = router;

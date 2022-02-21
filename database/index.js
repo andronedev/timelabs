@@ -30,7 +30,7 @@ const Devices = sequelize.define('devices', {
   },
   intervalMs: {
     type: DataTypes.INTEGER,
-    defaultValue: 60,
+    defaultValue: 60 * 1000,
   },
 
 })

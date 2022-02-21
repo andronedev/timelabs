@@ -65,6 +65,11 @@ hbs.registerHelper('dateFormat', function (date) {
   }
   return h + ":" + m + ":" + s + " " + dd + "/" + mm + "/" + yyyy;
 });
+hbs.registerHelper('MsToS', function (ms) {
+  return ms / 1000;
+});
+
+
 
 
 app.use(logger('dev'));

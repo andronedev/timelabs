@@ -35,9 +35,9 @@ router.post('/v1/send/:key', async function (req, res, next) {
         name: req.files.file.name
     })
     if (image) {
-        res.send("ok")
+        res.send(device.intervalMs + "")
     } else {
-        res.send("error")
+        res.sendStatus(500)
     }
 
 
