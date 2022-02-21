@@ -114,6 +114,10 @@ const Timelapses = sequelize.define('timelapses', {
   url: {
     type: DataTypes.STRING,
     allowNull: true,
+  },
+  logs: {
+    type: DataTypes.STRING,
+    allowNull: true,
   }
 })
 
