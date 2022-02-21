@@ -9,7 +9,7 @@
     </div>
     <div class="mt-3 p-5 columns is-flex is-justify-content-center">
         <div class="column box is-5 m-2">
-            <h3 class="title is-3">Configuration de l'appareil</h3>
+            <h3 class="title is-3">Installation de l'appareil</h3>
             <div class="card m-2">
                 <div class="card-content">
                     <div class="content is-medium">
@@ -29,9 +29,7 @@
                         </div>
                         <div class="">
                             <h4 class="title is-4">Ou en une ligne :</h4>
-                            <code>
-                                        wget -O - http://localhost:3000/dashboard/devices/{{device.id}}/script/bash?key={{device.key}} | bash
-                            </code>
+                            <code>wget -O - http://localhost:3000/dashboard/devices/{{device.id}}/script/bash?key={{device.key}} | bash</code>
                         </div>
                     </div>
                 </div>
@@ -117,16 +115,15 @@
                                     </div>
                                 </form>
 
-                            </div>
-                            <div class="column">
-                                {{#each timelaps}}
-                                <a download="timelabs-{{device.name}}-{{id}}.mp4"
-                                    href="/dashboard/devices/{{device.id}}/timelaps/{{id}}"
+                                <hr>
+                                {{#each timelapses}}
+                                <a download="timelabs-{{device.name}}-{{id}}.mp4" href="/dashboard/timelaps/{{id}}"
                                     class="button is-primary is-medium">
                                     Télécharger #{{id}} <span class="tag is-primary is-small">{{status}}</span>
                                 </a>
                                 {{/each}}
                             </div>
+
 
                         </div>
                     </div>
