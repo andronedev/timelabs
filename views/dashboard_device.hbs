@@ -1,0 +1,56 @@
+{{> dashboard_navbar}}
+
+<div class="container mt-5">
+    <div class="box">
+        <h3 class="title is-3">Appareil : <b>{{device.name}}</b></h3>
+        <span class="tag is-info is-medium">Statut : {{device.status}}</span>
+        <span class="tag is-info is-medium is-warning">Identifiant API : <span
+                class="tag is-small is-black ml-2">{{device.key}}</span></span>
+    </div>
+    <div class="mt-3 p-5 columns is-flex is-justify-content-center">
+        <div class="column box is-5 m-2">
+            <h3 class="title is-3">Configuration de l'appareil</h3>
+            <div class="card m-2">
+                <div class="card-content">
+                    <div class="content is-medium">
+                        <div class="columns">
+                            <div class="column">
+                                <h4 class="title is-4">Version Linux (raspberry, etc)</h4>
+                            </div>
+                            <div class="column">
+                                <a download="timelabs-{{device.name}}.bash"
+                                    href="/dashboard/devices/{{device.id}}/script/bash"
+                                    class="button is-primary is-medium">
+                                    <span>Télécharger</span>
+                                </a>
+
+                            </div>
+
+                        </div>
+                        <div class="">
+                            <h4 class="title is-4">Ou en une ligne :</h4>
+                            <code>
+                                        wget -O - http://localhost:3000/dashboard/devices/{{device.id}}/script/bash?key={{device.key}} | bash
+                            </code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card m-2">
+                <div class="card-content">
+                    <div class="content is-medium">
+                        <div class="columns">
+                            <div class="column">
+                                <h4 class="title is-4">Version Android</h4>
+                            </div>
+                            <div class="column">
+                                <a disabled class="button is-medium">
+                                    <span>Télécharger (Bientôt)</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>

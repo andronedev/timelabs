@@ -7,18 +7,22 @@ var sassMiddleware = require('node-sass-middleware');
 var cors = require("cors")
 const session = require('express-session');
 var hbs = require('hbs');
+const fileUpload = require('express-fileupload');
 var db = require("./database/index.js");
 
 db.init()
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var apiRouter = require('./routes/api');
 var dashboardRouter = require('./routes/dashboard');
 var app = express();
 
 var corsOptions = {
   origin: 'http://localhost:3000',
 };
+
+app.use(fileUpload());
 
 app.use(cors(corsOptions));
 
@@ -49,6 +53,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/dashboard', dashboardRouter)
+app.use('/api', apiRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

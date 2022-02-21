@@ -22,7 +22,12 @@ const Devices = sequelize.define('devices', {
   status: {
     type: DataTypes.STRING,
     allowNull: false,
-  }
+  },
+  key: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
 
 })
 
@@ -50,9 +55,13 @@ const Images = sequelize.define('images', {
     type: DataTypes.INTEGER,
     primaryKey: true,
   },
+  url: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   name: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   userId: {
     type: DataTypes.INTEGER,
