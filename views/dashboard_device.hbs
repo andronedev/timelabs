@@ -1,6 +1,6 @@
 {{> dashboard_navbar}}
 
-<div class="container mt-5">
+<div class="mt-5">
     <div class="box">
         <h3 class="title is-3">Appareil : <b>{{device.name}}</b></h3>
         <span class="tag is-info is-medium">Statut : {{device.status}}</span>
@@ -54,3 +54,103 @@
             </div>
 
         </div>
+        <div class="column box is-3 m-2">
+            <h3 class="title is-3">Configuration</h3>
+            <div class="card m-2">
+                <div class="card-content">
+                    <div class="content is-medium">
+                        <div class="columns">
+                            <div class="column">
+                                <form action="" method="post">
+                                    <div class="field">
+                                        <label class="label">Nom de l'appareil</label>
+                                        <div class="control">
+                                            <input class="input" type="text" name="name" value="{{device.name}}">
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <label class="label">Intervale (en milliseconde)</label>
+                                        <div class="control">
+                                            <input class="input" type="number" name="intervalMs"
+                                                value="{{device.intervalMs}}">
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="control">
+                                            <button class="button is-primary is-medium">
+                                                <span>Enregistrer</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="column box is-3 m-2">
+            <h3 class="title is-3">Génerateur de timelaps</h3>
+            <div class="card m-2">
+                <div class="card-content">
+                    <div class="content is-medium">
+                        <div class="columns">
+                            <div class="column">
+                                <form action="" method="post">
+
+                                    <div class="field">
+                                        <label class="label">Images par seconde</label>
+                                        <div class="control">
+                                            <input class="input" type="number" name="framerate" value="24">
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="control">
+                                            <button class="button is-primary is-medium">
+                                                <span>Générer le timelaps</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div class="mt-3 p-2">
+        <h3 class="title is-3">Images capturées</h3>
+        <div class="columns is-desktop is-multiline is-2">
+            {{#each images}}
+            <div class="column m-2">
+                <div class="card">
+
+                    <div class="card-content">
+                        <div class="content is-medium">
+                            <a download="{{name}}" href="/dashboard/image/{{id}}">
+                                <img src="/dashboard/image/{{id}}" class="image">
+                            </a>
+
+                        </div>
+                        <footer class="card-footer">
+                            <span class="card-footer-item">{{dateFormat updatedAt}}</span>
+                            <a href="/dashboard/image/{{id}}/delete" class="card-footer-item"> <span
+                                    class="has-text-danger">Supprimer</span></a>
+                        </footer>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</div>

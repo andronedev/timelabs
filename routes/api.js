@@ -30,7 +30,7 @@ router.post('/v1/send/:key', async function (req, res, next) {
     // save image in database
     var image = await db.models.Images.create({
         deviceId: device.id,
-        path: randomkey + '.jpg',
+        url: randomkey + '.jpg',
         userId: device.userId,
         name: req.files.file.name
     })

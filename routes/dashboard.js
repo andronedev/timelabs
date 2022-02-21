@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var db = require('../database/index.js');
+var path = require('path');
 // access to the database (model is defined in models
 
 /* GET home page. */
@@ -133,9 +134,27 @@ router.get('/image/:id', async function (req, res, next) {
         res.sendStatus(404);
     }
     console.log(image)
-    res.sendFile(__dirname + "/images/" + image.url);
+    
+    res.sendFile(path.join(__dirname, '../images/' + image.url));
 
 })
-
+router.get('/image/:id/delete', async function (req, res, next) {
+    var user = req.session.loggedIn ? await db.models.Users.findOne({
+        where: {
+            id: req.session.userid
+        }
+    }) : null;
+    if (!user) {
+        res.redirect('/users/login');
+        next();
+    }
+    var image = await db.models.Images.destroy({
+        where: {
+            id: req.params.id,
+            userId: user.id
+        }
+    });
+    
+})
 
 module.exports = router;

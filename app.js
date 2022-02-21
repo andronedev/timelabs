@@ -27,9 +27,9 @@ app.use(fileUpload());
 app.use(cors(corsOptions));
 
 app.use(session({
-	secret: 'aaa',
-	resave: true,
-	saveUninitialized: true
+  secret: 'aaa',
+  resave: true,
+  saveUninitialized: true
 }));
 
 // view engine setup
@@ -37,6 +37,35 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
 hbs.registerPartials(__dirname + "/views/partials");
+hbs.registerHelper('dateFormat', function (date) {
+  // hh:mm:ss dd/mm/yyyy
+  let d = new Date(date);
+
+  let h = d.getHours();
+  let m = d.getMinutes();
+  let s = d.getSeconds();
+  let dd = d.getDate();
+  let mm = d.getMonth() + 1;
+  let yyyy = d.getFullYear();
+
+  if (h < 10) {
+    h = "0" + h;
+  }
+  if (m < 10) {
+    m = "0" + m;
+  }
+  if (s < 10) {
+    s = "0" + s;
+  }
+  if (dd < 10) {
+    dd = "0" + dd;
+  }
+  if (mm < 10) {
+    mm = "0" + mm;
+  }
+  return h + ":" + m + ":" + s + " " + dd + "/" + mm + "/" + yyyy;
+});
+
 
 app.use(logger('dev'));
 app.use(express.json());

@@ -28,6 +28,10 @@ const Devices = sequelize.define('devices', {
     allowNull: false,
     unique: true,
   },
+  intervalMs: {
+    type: DataTypes.INTEGER,
+    defaultValue: 60,
+  },
 
 })
 
@@ -74,6 +78,47 @@ const Images = sequelize.define('images', {
 
 })
 
+const Timelapses = sequelize.define('timelapses', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  deviceId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  start: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+  end: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+  status: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  framerate: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  url: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  }
+})
+
+
+
 function init() {
 
   sequelize.sync()
@@ -85,7 +130,8 @@ const DB = {
   models: {
     Devices,
     Users,
-    Images
+    Images,
+    Timelapses
   }
 }
 

@@ -1,6 +1,6 @@
 {{> dashboard_navbar}}
 
-<div class="container mt-5">
+<div class="mt-5">
 
     <div class="card">
         <div class="card-content">
@@ -58,10 +58,18 @@
             <h3 class="title is-3">Dernières images</h3>
             {{#each latestImages}}
             <div class="card">
+
                 <div class="card-content">
                     <div class="content is-medium">
-                        <img src="/dashboard/image/{{id}}" class="image is-128x128">
+                        <a download="{{name}}" href="/dashboard/image/{{id}}">
+                            <img src="/dashboard/image/{{id}}" class="image">
+                        </a>
+
                     </div>
+                    <footer class="card-footer">
+                        <span class="card-footer-item">{{dateFormat updatedAt}}</span>
+                        <a href="/dashboard/devices/{{deviceId}}" class="card-footer-item"> Voir l'appareil</a>
+                    </footer>
                 </div>
             </div>
             {{/each}}
