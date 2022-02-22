@@ -32,7 +32,7 @@ async function createTimeLaps(images, framerate, userid, deviceid) {
     tempFile = path.join(__dirname, '../timelaps/' + tempFile);
     fs.writeFileSync(tempFile, source);
     // ${pathToFfmpeg} -r ${framerate} -i ${tempFile} -s 1920x1440 -vcodec libx264 ${output}
-    var job = spawn(pathToFfmpeg, ['-i', tempFile, '-r', framerate, '-s', '1920x1440', '-vcodec', 'libx264', output]);
+    var job = spawn(pathToFfmpeg, ['-f', 'concat', '-safe', '0','-i', tempFile, '-r', framerate, '-s', '1920x1440', '-vcodec', 'libx264', output]);
     job.stdout.on('data', (data) => {
         console.log(`stdout: ${data}`);
         timelaps.update({

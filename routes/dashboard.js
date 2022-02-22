@@ -16,10 +16,20 @@ router.get('/', async function (req, res, next) {
         res.redirect('/users/login');
         next();
     }
-    var nbUsers = await db.models.Users.count();
-    var nbDevices = await db.models.Devices.count();
-    var devices = await db.models.Devices.findAll();
+    var nbDevices = await db.models.Devices.count({
+        where: {
+            userId: user.id
+        }
+    });
+    var devices = await db.models.Devices.findAll({
+        where: {
+            userId: user.id
+        }
+    });
     var latestImages = await db.models.Images.findAll({
+        where: {
+            userId: user.id
+        },
         limit: 5,
         order: [
             ['createdAt', 'DESC']
@@ -27,7 +37,7 @@ router.get('/', async function (req, res, next) {
     });
     var nbImages = await db.models.Images.count();
 
-    res.render('dashboard_index', { nbUsers: nbUsers, nbDevices: nbDevices, nbImages: nbImages, user, devices: devices, latestImages: latestImages });
+    res.render('dashboard_index', { nbDevices: nbDevices, nbImages: nbImages, user, devices: devices, latestImages: latestImages });
 });
 
 router.get('/add', async function (req, res, next) {
@@ -100,7 +110,7 @@ router.get('/devices/:id', async function (req, res, next) {
         ]
     });
 
-    res.render('dashboard_device', { user, device: device, images: images, timelapses: timelapses });
+    res.render('dashboard_device', { user, device: device, images: images, timelapses: timelapses, host: req.app.get("host") });
 });
 router.get('/devices/:id/script/:type', async function (req, res, next) {
     var user = req.session.loggedIn ? await db.models.Users.findOne({
@@ -124,7 +134,7 @@ router.get('/devices/:id/script/:type', async function (req, res, next) {
     }
 
     if (req.params.type == "bash") {
-        var code = require("../scripts/linux.js")("http://localhost:3000/", device.key);
+        var code = require("../scripts/linux.js")(req.app.get("host"), device.key);
         res.send(code);
     }
 })
@@ -209,8 +219,7 @@ router.post("/devices/:id/createtimelaps", async function (req, res, next) {
         }
     });
 
-
-    require("../timelaps/generator.js")(images, framerate, user.id, device.id)
+    setImmediate(require("../timelaps/generator.js")(images, framerate, user.id, device.id));
     res.redirect('/dashboard/devices/' + device.id);
 });
 
