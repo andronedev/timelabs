@@ -35,7 +35,11 @@ router.get('/', async function (req, res, next) {
             ['createdAt', 'DESC']
         ]
     });
-    var nbImages = await db.models.Images.count();
+    var nbImages = await db.models.Images.count({
+        where: {
+            userId: user.id
+        }
+    });
 
     res.render('dashboard_index', { nbDevices: nbDevices, nbImages: nbImages, user, devices: devices, latestImages: latestImages });
 });

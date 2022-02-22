@@ -28,10 +28,15 @@ app.set("host", "http://192.168.1.95:3000/");
 
 app.use(cors(corsOptions));
 
+var SequelizeStore = require("connect-session-sequelize")(session.Store);
+
 app.use(session({
   secret: 'aaa',
   resave: true,
-  saveUninitialized: true
+  saveUninitialized: true,
+  store: new SequelizeStore({
+    db: db.sequelize
+  })
 }));
 
 // view engine setup
