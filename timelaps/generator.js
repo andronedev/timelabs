@@ -1,6 +1,5 @@
 var pathToFfmpeg = require('ffmpeg-static');
-const util = require('util');
-const exec = util.promisify(require('child_process').exec);
+const { spawn } = require('child_process')
 var db = require('../database/index.js');
 const path = require('path');
 const fs = require('fs');
@@ -30,16 +29,30 @@ async function createTimeLaps(images, framerate, userid, deviceid) {
         source += "file '" + path.join(__dirname, "../images/" + images[i].url) + "'\n";
     }
     let tempFile = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + ".txt";
-
+    tempFile = path.join(__dirname, '../timelaps/' + tempFile);
     fs.writeFileSync(tempFile, source);
-
-    var job = await exec(`${pathToFfmpeg} -y -f concat -safe 0 -i ${tempFile} -framerate ${framerate} -c:v libx264 -pix_fmt yuv420p -r 30 -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -preset ultrafast -crf 0 -c:a copy ${output}`)
-
-    timelaps.logs = job.stdout;
-    timelaps.status = "terminé";
-    timelaps.save();
-
-    fs.unlinkSync(tempFile);
+    // ${pathToFfmpeg} -r ${framerate} -i ${tempFile} -s 1920x1440 -vcodec libx264 ${output}
+    var job = spawn(pathToFfmpeg, ['-i', tempFile, '-r', framerate, '-s', '1920x1440', '-vcodec', 'libx264', output]);
+    job.stdout.on('data', (data) => {
+        console.log(`stdout: ${data}`);
+        timelaps.update({
+            logs: timelaps.logs + data + "\n"
+        })
+    });
+    job.stderr.on('data', (data) => {
+        console.log(`stderr: ${data}`);
+        timelaps.update({
+            logs: timelaps.logs + data + "\n"
+        })
+    });
+    job.on('close', (code) => {
+        console.log(`child process exited with code ${code}`);
+        timelaps.update({
+            status: "terminé",
+            logs: timelaps.logs + "[INFO] Terminé (" + code + ")\n"
+        })
+        fs.unlinkSync(tempFile);
+    });
 
     return output;
 

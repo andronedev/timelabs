@@ -200,7 +200,7 @@ router.post("/devices/:id/createtimelaps", async function (req, res, next) {
         }
     }).then(async function (timelapses) {
         for (var i = 0; i < timelapses.length; i++) {
-            fs.unlink(path.join(__dirname, '../timelapses/output/' + timelapses[i].url), function (err) {
+            fs.unlink(path.join(__dirname, '../timelaps/output/' + timelapses[i].url), function (err) {
                 if (err) {
                     console.log(err);
                 }
@@ -214,7 +214,7 @@ router.post("/devices/:id/createtimelaps", async function (req, res, next) {
     res.redirect('/dashboard/devices/' + device.id);
 });
 
-router.get('/timelaps/:tid', async function (req, res, next) {
+router.get('/timelaps/:tid/raw', async function (req, res, next) {
     var user = req.session.loggedIn ? await db.models.Users.findOne({
         where: {
             id: req.session.userid
@@ -234,13 +234,13 @@ router.get('/timelaps/:tid', async function (req, res, next) {
         res.redirect('/dashboard/devices/' + req.params.id);
         next();
     }
-    // send mp4
-    res.header('Content-Type', 'video/mp4'); 
+    // force download
+    res.setHeader('Content-disposition', 'attachment; filename=' + timeLaps.url);
+    res.setHeader('Content-type', 'video/mp4');
     res.sendFile(path.join(__dirname, '../timelaps/output/' + timeLaps.url));
 });
 
-
-router.get('/image/:id', async function (req, res, next) {
+router.get('/timelaps/:tid/stream', async function (req, res, next) {
     var user = req.session.loggedIn ? await db.models.Users.findOne({
         where: {
             id: req.session.userid
@@ -250,10 +250,79 @@ router.get('/image/:id', async function (req, res, next) {
         res.redirect('/users/login');
         next();
     }
+    var timelaps = await db.models.Timelapses.findOne({
+        where: {
+            id: req.params.tid,
+            userId: user.id,
+        }
+    });
+    if (!timelaps) {
+        res.redirect('/dashboard/devices/' + req.params.id);
+        next();
+    }
+    var file = path.join(__dirname, '../timelaps/output/' + timelaps.url);
+    var stat = fs.statSync(file);
+    var total = stat.size;
+    if (req.headers.range) {
+        var range = req.headers.range;
+        var parts = range.replace(/bytes=/, "").split("-");
+        var partialstart = parts[0];
+        var start = parseInt(partialstart, 10);
+        var end = start + (1024 * 1024) - 1;
+        var chunksize = (end - start) + 1;
+        var file = fs.createReadStream(file, {
+            start: start,
+            end: end
+        });
+        res.writeHead(206, {
+            "Content-Range": "bytes " + start + "-" + end + "/" + total,
+            "Accept-Ranges": "bytes",
+        }
+        );
+        file.pipe(res);
+
+    } else {
+        res.writeHead(200, {
+            "Content-Length": total,
+            "Content-Type": "video/mp4"
+        });
+        fs.createReadStream(file).pipe(res);
+    }
+});
+
+router.get('/timelaps/:tid', async function (req, res, next) {
+    var user = req.session.loggedIn ? await db.models.Users.findOne({
+        where: {
+            id: req.session.userid
+        }
+    }) : null;
+    if (!user) {
+        res.redirect('/users/login');
+        next();
+    }
+    var timelaps = await db.models.Timelapses.findOne({
+        where: {
+            id: req.params.tid,
+            userId: user.id,
+        }
+    });
+    if (!timelaps) {
+        res.redirect('/dashboard/');
+        next();
+    }
+    res.render('dashboard_timelaps', { user, timelaps });
+});
+
+router.get('/image/:id', async function (req, res, next) {
+    if (!req.session.loggedIn) {
+        res.redirect('/users/login');
+        next();
+    }
     var image = await db.models.Images.findOne({
+        attributes: ['url'],
         where: {
             id: req.params.id,
-            userId: user.id
+            userId: req.session.userid
         }
     });
     if (!image) {
@@ -279,6 +348,8 @@ router.get('/image/:id/delete', async function (req, res, next) {
             userId: user.id
         }
     });
+    res.redirect(req.header('Referer'));
+
 
 })
 

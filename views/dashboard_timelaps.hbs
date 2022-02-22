@@ -1,0 +1,19 @@
+{{> dashboard_navbar}}
+
+<div class="mt-2">
+    <div class="box has-background-light">
+        <h3 class="title is-3">Timelaps #<b>{{timelaps.id}}</b></h3>
+        <span class="tag is-info is-medium">Statut : {{timelaps.status}}</span>
+    </div>
+    <div class="box">
+        <h3 class="title is-3">Logs :</h3>
+        <pre><code>{{timelaps.logs}}</code></pre>
+    </div>
+    <div class="box">
+        <h3 class="title is-3">Rendu :</h3>
+        <video controls>
+            <source src="/dashboard/timelaps/{{timelaps.id}}/stream" type="video/mp4" />
+        </video>
+
+    </div>
+</div>
