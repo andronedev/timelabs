@@ -165,7 +165,7 @@ router.post("/devices/:id/edit", async function (req, res, next) {
         device.name = req.body.name;
     }
     if (req.body.intervalS) {
-        if (req.body.intervalS >= 5) {
+        if (req.body.intervalS >= 1) {
             device.intervalMs = req.body.intervalS * 1000;
         }
     }
@@ -324,8 +324,68 @@ router.get('/timelaps/:tid', async function (req, res, next) {
         next();
     }
     console.log(timelaps)
-    res.render('dashboard_timelaps', { user, timelaps });
+    res.render('dashboard_timelaps', { user, timelaps, done: timelaps.status == 'terminé' });
 });
+
+router.get('/timelaps/:tid/delete', async function (req, res, next) {
+    var user = req.session.loggedIn ? await db.models.Users.findOne({
+        where: {
+            id: req.session.userid
+        }
+    }) : null;
+    if (!user) {
+        res.redirect('/users/login');
+        next();
+    }
+    var timelaps = await db.models.Timelapses.findOne({
+        where: {
+            id: req.params.tid,
+            userId: user.id,
+        }
+    });
+    if (!timelaps) {
+        res.redirect('/dashboard/');
+        next();
+    }
+    fs.unlink(path.join(__dirname, '../timelaps/output/' + timelaps.url), function (err) {
+        if (err) {
+            console.log(err);
+        }
+    });
+    await timelaps.destroy();
+    res.redirect(req.headers.referer);
+});
+
+router.get('/timelaps/:tid/infos', async function (req, res, next) {
+    var user = req.session.loggedIn ? await db.models.Users.findOne({
+        where: {
+            id: req.session.userid
+        }
+    }) : null;
+    if (!user) {
+        res.redirect('/users/login');
+        next();
+    }
+    var timelaps = await db.models.Timelapses.findOne({
+        where: {
+            id: req.params.tid,
+            userId: user.id,
+        }
+    });
+    if (!timelaps) {
+        res.redirect('/dashboard/');
+        next();
+    }
+    let done = timelaps.status == 'terminé';
+
+    res.header('Content-Type', 'application/json');
+    res.send(JSON.stringify({
+        logs : timelaps.logs,
+        status: timelaps.status,
+        done : done
+    }));
+});
+
 
 router.get('/image/:id', async function (req, res, next) {
     if (!req.session.loggedIn) {

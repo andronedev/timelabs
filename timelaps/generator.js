@@ -3,6 +3,32 @@ const { spawn } = require('child_process')
 var db = require('../database/index.js');
 const path = require('path');
 const fs = require('fs');
+
+function addLog(timelaps, log) {
+    // remove hight sensible data
+    // root folder
+    log = log.replace(path.join(__dirname, '../'), "");
+    // timelaps folder
+    log = log.replace(path.join(__dirname, '../timelaps/'), "");
+    // images folder
+    log = log.replace(path.join(__dirname, '../images/'), "");
+    // ffmpeg folder
+    log = log.replace(path.join(__dirname, '../ffmpeg/'), "");
+    // ffmpeg-static folder (pathToFfmpeg)
+    log = log.replace(pathToFfmpeg, "ffmpeg");
+
+
+    db.models.Timelapses.update({
+        logs: log.toString()
+    }, {
+        where: {
+            id: timelaps.id
+        }
+    }).then(function (result) {
+        console.log(result);
+    })
+}
+
 async function createTimeLaps(images, framerate, userid, deviceid) {
     framerate = parseInt(framerate);
     // create temp file with images 
@@ -17,11 +43,11 @@ async function createTimeLaps(images, framerate, userid, deviceid) {
         status: "en cours",
         framerate: framerate,
         url: output,
-        logs: ""
+        logs: "[INFO - Timelabs] Début de la création de la vidéo\n"
     }).catch(err => {
         console.error(err);
     });
-    console.log(JSON.stringify(timelaps,null,4))
+    console.log(JSON.stringify(timelaps, null, 4))
     output = path.join(__dirname, '../timelaps/output/' + output);
 
     let source = "";
@@ -37,35 +63,17 @@ async function createTimeLaps(images, framerate, userid, deviceid) {
     job.stdout.on('data', (data) => {
         logs += data.toString() + "\n";
 
-
-        db.models.Timelapses.update({
-            logs: logs.toString()
-        }, {
-            where: {
-                id: timelaps.id
-            }
-        }).then(function (result) {
-            console.log(result);
-        })
+        addLog(timelaps, logs);
     });
     job.stderr.on('data', (data) => {
         logs += data.toString() + "\n";
 
-
-        db.models.Timelapses.update({
-            logs: logs.toString()
-        }, {
-            where: {
-                id: timelaps.id
-            }
-        }).then(function (result) {
-            console.log(result);
-        })
+        addLog(timelaps, logs);
 
     });
     job.on('close', (code) => {
         // console.log(`child process exited with code ${code}`);
-        logs += "[INFO] Process exited with code " + code + "\n";
+        logs += "[INFO - Timelabs] Fin de la création de la video :) (code " + code + ")\n";
 
         db.models.Timelapses.update({
             logs: logs.toString(),
