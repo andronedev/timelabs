@@ -129,8 +129,11 @@
     </div>
 
 
-    <div class="mt-3 p-2">
-        <h3 class="title is-3">Images capturées</h3>
+    <div class="container">
+        <h3 class="title is-3">Images capturées <a href="/dashboard/devices/{{device.id}}/images"
+                class="button is-primary is-smallh">
+                Voir toutes les images
+            </a></h3>
         <div class="columns is-desktop is-multiline is-2">
             {{#each images}}
             <div class="column m-2">
@@ -139,7 +142,7 @@
                     <div class="card-content">
                         <div class="content is-medium">
                             <a download="{{name}}" href="/dashboard/image/{{id}}">
-                                {{!-- <img src="/dashboard/image/{{id}}" class="image"> --}}
+                                <img src="/dashboard/image/{{id}}" class="image">
                             </a>
 
                         </div>
@@ -152,6 +155,21 @@
                 </div>
             </div>
             {{/each}}
+            <div class="column m-2">
+                <div class="card">
+                    <div class="card-content">
+                        <span class="tag is-info is-medium is-warning">
+                            Il y a un total de {{nbImages}} images
+                        </span>
+                        
+                        <a href="/dashboard/devices/{{device.id}}/images"
+                            class="button is-primary is-medium is-fullwidth mt-2">
+                            Voir toutes les images
+                        </a>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 </div>
