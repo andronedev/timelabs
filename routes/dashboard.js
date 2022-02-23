@@ -219,21 +219,29 @@ router.get('/devices/:id/images/:page?', async function (req, res, next) {
     var previousPageUrl = previousPage ? '/dashboard/devices/' + device.id + '/images/' + previousPage : false;
     res.render('dashboard_device_images', { user, device: device, images: images, pagination, page: req.params.page, nextPage, previousPage, nextPageUrl, previousPageUrl });
 });
-router.get('/devices/:id/script/:type', async function (req, res, next) {
+router.get('/devices/:id/script/:type/:clef?', async function (req, res, next) {
+    // check key param
+
     var user = req.session.loggedIn ? await db.models.Users.findOne({
         where: {
             id: req.session.userid
         }
     }) : null;
-    if (!user && (!req.query.key || req.query.key == undefined)) {
+   
+    if (!user && !req.params.clef) {
         res.redirect('/users/login');
         next();
     }
-    var device = await db.models.Devices.findOne({
-        where: {
-            id: req.params.id,
-            key: req.query.key
+    wherekey = {
+        key: req.params.clef
+    }
+    if (!req.params.clef) {
+        wherekey = {
+            id: req.params.id
         }
+    }
+    var device = await db.models.Devices.findOne({
+        where: wherekey
     });
     if (!device) {
         res.redirect('/dashboard');
