@@ -11,7 +11,7 @@ router.post('/v1/send/:key', async function (req, res, next) {
         }
     })
     if (!device) {
-        res.send("error")
+        res.sendStatus(404).send("Device not found")
     }
     if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).send('No files were uploaded.');
@@ -30,7 +30,7 @@ router.post('/v1/send/:key', async function (req, res, next) {
     // console.log(req.files)
     req.files.file.mv(imagePath, function (err) {
         if (err)
-            return res.status(500).send(err);
+            return res.status(500).send("Error while saving image");
     });
 
     // save image in database
@@ -41,9 +41,9 @@ router.post('/v1/send/:key', async function (req, res, next) {
         name: req.files.file.name
     })
     if (image) {
-        res.send(device.intervalMs + "")
+        res.send(device.intervalMs + "") // send interval in ms
     } else {
-        res.sendStatus(500)
+        res.sendStatus(500).send("Error while saving image (2)")
     }
 
 
