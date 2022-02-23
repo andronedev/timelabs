@@ -18,9 +18,9 @@ router.post('/v1/send/:key', async function (req, res, next) {
     }
 
     // check if image (file) is a jpg image 
-    if (req.files.file.mimetype != "image/jpeg"  || req.files.file.mimetype != "image/jpg") {
-        return res.status(400).send('File is not a jpg image');
-    }
+    // if (req.files.file.mimetype != "image/jpeg" && req.files.file.mimetype != "image/jpg") {
+    //     return res.status(400).send('File is not a jpg image');
+    // }
 
     // save image in ../images/
     let randomkey = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
