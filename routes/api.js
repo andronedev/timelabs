@@ -16,9 +16,9 @@ router.post('/v1/send/:key', async function (req, res, next) {
     if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).send('No files were uploaded.');
     }
-    
+
     // check if image (file) is a jpg image 
-    if (req.files.file.mimetype != "image/jpeg") {
+    if (req.files.file.mimetype != "image/jpeg"  || req.files.file.mimetype != "image/jpg") {
         return res.status(400).send('File is not a jpg image');
     }
 
