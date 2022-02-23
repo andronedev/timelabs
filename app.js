@@ -18,7 +18,7 @@ var apiRouter = require('./routes/api');
 var dashboardRouter = require('./routes/dashboard');
 var app = express();
 const HOST = process.env.HOST || 'http://192.168.1.95:3000/'
-
+console.log(HOST)
 var corsOptions = {
   origin: HOST,
 };
