@@ -121,7 +121,7 @@ router.get('/devices/:id', async function (req, res, next) {
         }
     });
 
-    res.render('dashboard_device', { user, device: device, timelapses: timelapses, images, nbImages });
+    res.render('dashboard_device', { user, device: device, timelapses: timelapses, images, nbImages, host: req.app.get('host') });
 });
 router.get('/devices/:id/images/:page?', async function (req, res, next) {
     req.params.page = parseInt(req.params.page) || 1;
