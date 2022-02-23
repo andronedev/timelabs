@@ -9,7 +9,7 @@ const session = require('express-session');
 var hbs = require('hbs');
 const fileUpload = require('express-fileupload');
 var db = require("./database/index.js");
-
+console.log(process.env)
 db.init()
 
 var indexRouter = require('./routes/index');
@@ -17,14 +17,16 @@ var usersRouter = require('./routes/users');
 var apiRouter = require('./routes/api');
 var dashboardRouter = require('./routes/dashboard');
 var app = express();
+const HOST = process.env.HOST || 'http://192.168.1.95:3000/'
 
 var corsOptions = {
-  origin: process.env.HOST || 'http://192.168.1.95:3000/',
+  origin: HOST,
 };
 
 app.use(fileUpload());
 
-app.set("host", process.env.HOST || "http://192.168.1.95:3000/");
+
+app.set("host", HOST);
 
 app.use(cors(corsOptions));
 
