@@ -1,0 +1,58 @@
+{{> dashboard_navbar}}
+<a href="/dashboard/devices/{{device.id}}" class="button is-info is-small m-2">
+    <span class="icon">
+        <i class="fas fa-arrow-left"></i>
+    </span>
+    <span>Retour</span>
+</a>
+<div class="p-2">
+
+    <h3 class="title is-3">Images capturées</h3>
+    <div class="columns is-desktop is-multiline is-2">
+        {{#each images}}
+        <div class="column m-2">
+            <div class="card">
+
+                <div class="card-content">
+                    <div class="content is-medium">
+                        <a download="{{name}}" href="/dashboard/image/{{id}}">
+                            <img src="/dashboard/image/{{id}}" class="image">
+                        </a>
+
+                    </div>
+                    <footer class="card-footer">
+                        <span class="card-footer-item">{{dateFormat updatedAt}}</span>
+                        <a href="/dashboard/image/{{id}}/delete" class="card-footer-item"> <span
+                                class="has-text-danger">Supprimer</span></a>
+                    </footer>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+
+    </div>
+    <nav class="pagination" role="navigation" aria-label="pagination">
+        {{#if previousPage}}
+        <a class="pagination-previous" href="{{previousPageUrl}}">Précédent</a>
+        {{/if}}
+
+        {{#if nextPage}}
+        <a class="pagination-next" href="{{nextPageUrl}}">Page suivante</a>
+        {{/if}}
+
+        <ul class="pagination-list">
+            {{#each pagination}}
+            <li>
+                {{#if ellipsis}}
+                <span class="pagination-ellipsis">&hellip;</span>
+                {{else}}
+                <a class="pagination-link {{#if active}}is-current{{/if}}" aria-label="Page {{page}}"
+                    href="{{url}}">{{page}}</a>
+                {{/if}}
+
+            </li>
+            {{/each}}
+
+        </ul>
+    </nav>
+</div>

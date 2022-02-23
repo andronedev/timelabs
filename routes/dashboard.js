@@ -95,26 +95,129 @@ router.get('/devices/:id', async function (req, res, next) {
         res.redirect('/dashboard');
         next();
     }
-    var images = await db.models.Images.findAll({
-        where: {
-            deviceId: device.id
-        },
-        order: [
-            ['createdAt', 'DESC']
-        ]
-    });
     var timelapses = await db.models.Timelapses.findAll({
         where: {
             userId: user.id,
             deviceId: device.id
         },
-
         order: [
             ['createdAt', 'DESC']
-        ]
+        ],
+    });
+    var images = await db.models.Images.findAll({
+        where: {
+            userId: user.id,
+            deviceId: device.id
+        },
+        order: [
+            ['createdAt', 'DESC']
+        ],
+        limit: 5
+    });
+    var nbImages = await db.models.Images.count({
+        where: {
+            userId: user.id,
+            deviceId: device.id
+        }
     });
 
-    res.render('dashboard_device', { user, device: device, images: images, timelapses: timelapses, host: req.app.get("host") });
+    res.render('dashboard_device', { user, device: device, timelapses: timelapses, images, nbImages });
+});
+router.get('/devices/:id/images/:page?', async function (req, res, next) {
+    req.params.page = parseInt(req.params.page) || 1;
+    if (req.params.page < 1) {
+        req.params.page = 1;
+    }
+    var user = req.session.loggedIn ? await db.models.Users.findOne({
+        where: {
+            id: req.session.userid
+        }
+    }) : null;
+    if (!user) {
+        res.redirect('/users/login');
+        next();
+    }
+    var device = await db.models.Devices.findOne({
+        where: {
+            id: req.params.id
+        }
+    });
+    if (!device) {
+        res.redirect('/dashboard');
+        next();
+    }
+    var images = await db.models.Images.findAll({
+        where: {
+            userId: user.id,
+            deviceId: device.id
+        },
+        order: [
+            ['createdAt', 'DESC']
+        ],
+        offset: (req.params.page - 1) * 10,
+        limit: 10
+    });
+    var nbImages = await db.models.Images.count({
+        where: {
+            userId: user.id,
+            deviceId: device.id
+        }
+    });
+    var pagination = []
+    pagination.push({
+        page: 1,
+        active: req.params.page == 1,
+        url: '/dashboard/devices/' + device.id + '/images/1',
+        ellipsis: false
+    })
+    pagination.push({
+        page: -1,
+        active: false,
+        url: '',
+        ellipsis: true
+    })
+    for (var i = req.params.page - 3; i <= req.params.page + 3; i++) {
+        if (i == 1 || i == Math.ceil(nbImages / 10)) continue;
+        if (i == req.params.page) {
+            pagination.push({
+                page: i,
+                active: true,
+                url: '/dashboard/devices/' + device.id + '/images/' + i,
+                ellipsis: false
+
+            });
+        } else if (i > 0 && i <= Math.ceil(nbImages / 10)) {
+            pagination.push({
+                page: i,
+                active: false,
+                url: '/dashboard/devices/' + device.id + '/images/' + i,
+                ellipsis: false
+            });
+        }
+    }
+    pagination.push({
+        page: -1,
+        active: false,
+        url: '',
+        ellipsis: true
+    })
+    pagination.push({
+        page: Math.ceil(nbImages / 10),
+        active: req.params.page == Math.ceil(nbImages / 10),
+        url: '/dashboard/devices/' + device.id + '/images/' + Math.ceil(nbImages / 10),
+        ellipsis: false
+    })
+    var nextPage = req.params.page + 1;
+    if (nextPage > Math.ceil(nbImages / 10)) {
+        nextPage = false
+    }
+    var previousPage = req.params.page - 1;
+    if (previousPage < 1) {
+        previousPage = false
+    }
+    var nextPageUrl = nextPage ? '/dashboard/devices/' + device.id + '/images/' + nextPage : false;
+    var previousPageUrl = previousPage ? '/dashboard/devices/' + device.id + '/images/' + previousPage : false;
+    res.render('dashboard_device_images', { user, device: device, images: images, pagination, page: req.params.page, nextPage, previousPage, nextPageUrl, previousPageUrl });
 });
 router.get('/devices/:id/script/:type', async function (req, res, next) {
     var user = req.session.loggedIn ? await db.models.Users.findOne({
@@ -412,9 +515,9 @@ router.get('/timelaps/:tid/infos', async function (req, res, next) {
 
     res.header('Content-Type', 'application/json');
     res.send(JSON.stringify({
-        logs : timelaps.logs,
+        logs: timelaps.logs,
         status: timelaps.status,
-        done : done
+        done: done
     }));
 });
 
