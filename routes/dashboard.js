@@ -172,6 +172,38 @@ router.post("/devices/:id/edit", async function (req, res, next) {
     device.save();
     res.redirect('/dashboard/devices/' + device.id);
 });
+
+router.get('/devices/:id/deleteallimages', async function (req, res, next) {
+    var user = req.session.loggedIn ? await db.models.Users.findOne({
+        where: {
+            id: req.session.userid
+        }
+    }) : null;
+    if (!user) {
+        res.redirect('/users/login');
+        next();
+    }
+    var device = await db.models.Devices.findOne({
+        where: {
+            id: req.params.id
+        }
+    });
+    if (!device) {
+        res.redirect('/dashboard');
+        next();
+    }
+    var images = await db.models.Images.findAll({
+        where: {
+            deviceId: device.id,
+            userId: user.id
+        }
+    });
+    for (var i = 0; i < images.length; i++) {
+        images[i].destroy();
+    }
+    res.redirect('/dashboard/devices/' + device.id);
+});
+
 router.post("/devices/:id/createtimelaps", async function (req, res, next) {
     var user = req.session.loggedIn ? await db.models.Users.findOne({
         where: {

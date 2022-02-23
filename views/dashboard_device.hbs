@@ -54,82 +54,77 @@
         </div>
         <div class="column box is-3 m-2">
             <h3 class="title is-3">Configuration</h3>
-            <div class="card m-2">
-                <div class="card-content">
-                    <div class="content is-medium">
-                        <div class="columns">
-                            <div class="column">
-                                <form action="{{device.id}}/edit/" method="post">
-                                    <div class="field">
-                                        <label class="label">Nom de l'appareil</label>
-                                        <div class="control">
-                                            <input class="input" type="text" name="name" value="{{device.name}}">
-                                        </div>
-                                    </div>
-                                    <div class="field">
-                                        <label class="label">Intervale (en secondes)</label>
-                                        <div class="control">
-                                            <input class="input" type="number" name="intervalS"
-                                                value="{{MsToS device.intervalMs}}" min="1">
-                                        </div>
-                                    </div>
-                                    <div class="field">
-                                        <div class="control">
-                                            <button class="button is-primary is-medium">
-                                                <span>Enregistrer</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
 
-                            </div>
-
+            <div class="m-2">
+                <form action="{{device.id}}/edit/" method="post">
+                    <div class="field">
+                        <label class="label">Nom de l'appareil</label>
+                        <div class="control">
+                            <input class="input" type="text" name="name" value="{{device.name}}">
                         </div>
                     </div>
-                </div>
+                    <div class="field">
+                        <label class="label">Intervale (en secondes)</label>
+                        <div class="control">
+                            <input class="input" type="number" name="intervalS" value="{{MsToS device.intervalMs}}"
+                                min="1">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <button class="button is-primary is-medium">
+                                <span>Enregistrer</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <hr>
+
+                <form action="{{device.id}}/deleteallimages/" method="get">
+                    <div class="field">
+                        <div class="control">
+                            <button class="button is-danger is-medium">
+                                <span>Supprimer toutes les images</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
             </div>
 
 
         </div>
         <div class="column box is-3 m-2">
             <h3 class="title is-3">Génerateur de timelaps</h3>
-            <div class="card m-2">
-                <div class="card-content">
-                    <div class="content is-medium">
-                        <div class="columns">
-                            <div class="column">
-                                <form action="{{device.id}}/createtimelaps" method="post">
+            <div class="m-2">
 
-                                    <div class="field">
-                                        <label class="label">Images par seconde</label>
-                                        <div class="control">
-                                            <input class="input" type="number" name="framerate" value="24" min="1">
-                                        </div>
-                                    </div>
-                                    <div class="field">
-                                        <div class="control">
-                                            <button class="button is-primary is-medium">
-                                                <span>Générer le timelaps</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
+                <form action="{{device.id}}/createtimelaps" method="post">
 
-                                <hr>
-                                {{#each timelapses}}
-                                <a href="/dashboard/timelaps/{{id}}"
-                                    class="button is-primary is-medium is-fullwidth">
-                                    Voir le timelaps #{{id}}
-                                </a>
-                                {{/each}}
-                            </div>
-
-
+                    <div class="field">
+                        <label class="label">Images par seconde</label>
+                        <div class="control">
+                            <input class="input" type="number" name="framerate" value="24" min="1">
                         </div>
                     </div>
-                </div>
+                    <div class="field">
+                        <div class="control">
+                            <button class="button is-primary is-medium">
+                                <span>Générer le timelaps</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
 
+                <hr>
+                {{#each timelapses}}
+                <a href="/dashboard/timelaps/{{id}}" class="button is-primary is-medium is-fullwidth">
+                    Voir le timelaps #{{id}}
+                </a>
+                {{/each}}
             </div>
+
+
+
         </div>
     </div>
 
