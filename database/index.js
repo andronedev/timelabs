@@ -3,7 +3,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize({
   dialect: 'sqlite',
   storage: './db.sqlite',
-  logging: false
+  logging: true
 });
 
 
@@ -11,6 +11,7 @@ const Devices = sequelize.define('devices', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
+    autoIncrement: true,
   },
   name: {
     type: DataTypes.STRING,

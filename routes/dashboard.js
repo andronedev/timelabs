@@ -223,7 +223,7 @@ router.post("/devices/:id/createtimelaps", async function (req, res, next) {
         }
     });
 
-    setImmediate(require("../timelaps/generator.js")(images, framerate, user.id, device.id));
+    require("../timelaps/generator.js")(images, framerate, user.id, device.id);
     res.redirect('/dashboard/devices/' + device.id);
 });
 
@@ -323,6 +323,7 @@ router.get('/timelaps/:tid', async function (req, res, next) {
         res.redirect('/dashboard/');
         next();
     }
+    console.log(timelaps)
     res.render('dashboard_timelaps', { user, timelaps });
 });
 

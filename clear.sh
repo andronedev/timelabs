@@ -1,0 +1,1 @@
+rm -rf timelaps/*.txt timelaps/output/* db.sqlite images/*.jpg

@@ -32,25 +32,40 @@ async function createTimeLaps(images, framerate, userid, deviceid) {
     tempFile = path.join(__dirname, '../timelaps/' + tempFile);
     fs.writeFileSync(tempFile, source);
     // ${pathToFfmpeg} -r ${framerate} -i ${tempFile} -s 1920x1440 -vcodec libx264 ${output}
-    var job = spawn(pathToFfmpeg, ['-f', 'concat', '-safe', '0','-i', tempFile, '-r', framerate, '-s', '1920x1440', '-vcodec', 'libx264', output]);
+    var logs = "";
+    var job = spawn(pathToFfmpeg, ['-f', 'concat', '-safe', '0', '-i', tempFile, '-r', framerate, '-s', '1920x1440', '-vcodec', 'libx264', '-f', 'mp4', output]);
     job.stdout.on('data', (data) => {
-        console.log(`stdout: ${data}`);
-        timelaps.update({
-            logs: timelaps.logs + data + "\n"
+        // console.log(`stdout: ${data}`);
+        logs += data.toString() + "\n";
+        timelaps.set({
+            logs: logs.toString()
         })
+        timelaps.save({
+            fields: ['logs']
+        });
     });
     job.stderr.on('data', (data) => {
-        console.log(`stderr: ${data}`);
-        timelaps.update({
-            logs: timelaps.logs + data + "\n"
+        logs += data.toString() + "\n";
+        //   console.log(`stderr: ${data}`);
+        console.log(data.toString());
+        timelaps.set({
+            logs: logs.toString()
         })
+        timelaps.save({
+            fields: ['logs']
+        });
     });
     job.on('close', (code) => {
-        console.log(`child process exited with code ${code}`);
-        timelaps.update({
+        // console.log(`child process exited with code ${code}`);
+        logs += "child process exited with code " + code + "\n";
+        timelaps.set({
             status: "terminé",
-            logs: timelaps.logs + "[INFO] Terminé (" + code + ")\n"
+            end: new Date(),
+            logs: logs.toString()
         })
+        timelaps.save({
+            fields: ["status", "end", "logs"]
+        });
         fs.unlinkSync(tempFile);
     });
 
