@@ -19,12 +19,12 @@ var dashboardRouter = require('./routes/dashboard');
 var app = express();
 
 var corsOptions = {
-  origin: 'http://192.168.1.95:3000/',
+  origin: process.env.HOST || 'http://192.168.1.95:3000/',
 };
 
 app.use(fileUpload());
 
-app.set("host", "http://192.168.1.95:3000/");
+app.set("host", process.env.HOST || "http://192.168.1.95:3000/");
 
 app.use(cors(corsOptions));
 
