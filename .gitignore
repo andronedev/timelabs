@@ -63,3 +63,4 @@ typings/
 /images/*
 db.sqlite
 /timelaps/output/*
+/timelaps/*.txt

@@ -1,18 +1,65 @@
-<h1>Bienvenue sur TimeLabs</h1>
-<p>
-    Vous êtes sur la page d'accueil.
-</p>
-{{#if user}}
-    <p>
-        Vous êtes connecté en tant que {{user.name}}.
-    </p>
-{{/if}}
-{{#unless user}}
-<p>
-    <a href="/users/login">Se connecter</a>
-</p>
-<p>
-    <a href="/users/register">S'inscrire</a>
-</p>
-{{/unless}}
-<p>Il y a {{nbUsers}} utilisateurs inscrits, {{nbDevices}} appareils connectés et {{nbImages}} images enregistrées.</p>
+<section class="hero is-primary is-medium">
+    <div class="hero-body">
+        <p class="title">
+            Bienvenue sur TimeLabs
+        </p>
+        <p class="subtitle">
+            L'outil parfait pour vos timelapses
+        </p>
+    </div>
+</section>
+<section class="section">
+    <h1 class="title">Timelabs c'est quoi ?</h1>
+    <h2 class="subtitle">
+        <b>Timelabs</b> est un outil qui vous permet de connecter des appareil (raspberrypi, webcam, etc) a votre compte
+        et d'enregistrer vos timelaps
+    </h2>
+</section>
+<hr>
+<nav class="level">
+    <div class="level-item has-text-centered">
+        <div>
+            <p class="heading">Inscrits</p>
+            <p class="title">{{nbUsers}}</p>
+        </div>
+    </div>
+    <div class="level-item has-text-centered">
+        <div>
+            <p class="heading">Appareils</p>
+            <p class="title">{{nbDevices}}</p>
+        </div>
+    </div>
+    <div class="level-item has-text-centered">
+        <div>
+            {{#if user}}
+            <a class="button is-success is-large" href="/dashboard">
+                <span>
+                    Acceder au dashboard
+                </span>
+            </a>
+            {{/if}}
+            {{#unless user}}
+            <p>
+                <a href="/users/login" class="button is-info is-fullwidth">Se connecter</a>
+            </p>
+            <br>
+            <p>
+                <a href="/users/register" class="button is-success is-fullwidth">S'inscrire</a>
+            </p>
+            {{/unless}}
+        </div>
+    </div>
+    <div class="level-item has-text-centered">
+        <div>
+            <p class="heading">Timelaps</p>
+            <p class="title">{{nbTimelapses}}</p>
+        </div>
+    </div>
+    <div class="level-item has-text-centered">
+        <div>
+            <p class="heading">Images</p>
+            <p class="title">{{nbImages}}</p>
+        </div>
+    </div>
+</nav>
+<hr>
